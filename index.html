@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEP</title>
+</head>
+
+<body>
+    <form action="/submit-endereco" method="post">
+        <label for="cep">CEP:</label>
+        <input type="text" id="cep" onblur="buscarEndereco()"><br><br>
+
+        <label for="rua">Rua:</label>
+        <input type="text" id="rua"><br><br>
+
+        <label for="bairro">Bairro:</label>
+        <input type="text" id="bairro"><br><br>
+
+        <label for="cidade">Cidade:</label>
+        <input type="text" id="cidade"><br><br>
+
+        <label for="estado">Estado:</label>
+        <input type="text" id="estado">
+
+        <script>
+            async function buscarEndereco()
+            {
+                // Obtem o valor do campo do CEP e remove não número
+                let cep = document.getElementById('cep').value.replace(/\D/g, ''); // REGEX
+                // Verifica se o CEP tem 8 dígitos
+                if (cep.length != 8)
+                {
+                    alert("CEP Inválido");
+                    return; // Interrompe o código
+                }
+                // Busca dentro de um TRY via requisição
+                try 
+                {
+                    let resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                    // Converte a resposta em JSON
+                    let endereco = await resposta.json();
+
+                    // Aplica a resposta nos inputs
+                    document.getElementById('rua').value = endereco.logradouro;
+                    document.getElementById('bairro').value = endereco.bairro;
+                    document.getElementById('cidade').value = endereco.localidade;
+                    document.getElementById('estado').value = endereco.uf;
+                }
+                catch (erro) 
+                {
+                    alert("Erro ao buscar o endereço");
+                }
+            }
+        </script>
+</body>
+
+</html>
